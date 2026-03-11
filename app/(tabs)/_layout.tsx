@@ -24,10 +24,57 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="time-tracker"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Time',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="clock.fill" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="planner"
+        options={{
+          title: 'Tasks',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="checkmark.circle.fill" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="habits"
+        options={{
+          title: 'Habits',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="list.bullet.rectangle.fill" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="goals"
+        options={{
+          title: 'Goals',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="target" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="projects"
+        options={{
+          title: 'Projects',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="folder.fill" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="reports"
+        options={{
+          title: 'Reports',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="chart.bar.fill" color={color} />
+          ),
         }}
       />
     </Tabs>

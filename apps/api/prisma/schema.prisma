@@ -1,0 +1,161 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id    Int    @id @default(autoincrement())
+  name  String?
+  email String? @unique
+
+  timeEntries   TimeEntry[]
+  tasks         Task[]
+  habits        Habit[]
+  moodEntries   MoodEntry[]
+  goals         Goal[]
+  projects      Project[]
+}
+
+model ActivityCategory {
+  id          Int          @id @default(autoincrement())
+  name        String
+  color       String
+  description String?
+  type        String
+
+  timeEntries TimeEntry[]
+  plannedTime PlannedTime[]
+  tasks       Task[]       @relation("TaskCategory")
+}
+
+model TimeEntry {
+  id               Int       @id @default(autoincrement())
+  user             User?     @relation(fields: [userId], references: [id])
+  userId           Int?
+  category         ActivityCategory @relation(fields: [categoryId], references: [id])
+  categoryId       Int
+  project          Project?  @relation(fields: [projectId], references: [id])
+  projectId        Int?
+  task             Task?     @relation(fields: [taskId], references: [id])
+  taskId           Int?
+  startTime        DateTime
+  endTime          DateTime?
+  durationMinutes  Int?
+  notes            String?
+}
+
+model Task {
+  id              Int      @id @default(autoincrement())
+  user            User?    @relation(fields: [userId], references: [id])
+  userId          Int?
+  title           String
+  description     String?
+  date            DateTime?
+  dueDate         DateTime?
+  status          String   @default("todo")
+  priority        Int      @default(0)
+  project         Project? @relation(fields: [projectId], references: [id])
+  projectId       Int?
+  taskCategory    ActivityCategory? @relation("TaskCategory", fields: [taskCategoryId], references: [id])
+  taskCategoryId  Int?
+  parentTask      Task?    @relation("Subtasks", fields: [parentTaskId], references: [id])
+  parentTaskId    Int?
+  subtasks        Task[]   @relation("Subtasks")
+  estimatedMinutes Int?
+  actualMinutes   Int?
+
+  timeEntries     TimeEntry[]
+}
+
+model Habit {
+  id             Int        @id @default(autoincrement())
+  user           User?      @relation(fields: [userId], references: [id])
+  userId         Int?
+  name           String
+  description    String?
+  frequency      String
+  targetPerPeriod Int?
+  color          String?
+
+  logs           HabitLog[]
+}
+
+model HabitLog {
+  id       Int      @id @default(autoincrement())
+  habit    Habit    @relation(fields: [habitId], references: [id])
+  habitId  Int
+  date     DateTime
+  value    Int?
+  note     String?
+
+  @@unique([habitId, date], name: "habitId_date")
+}
+
+model MoodEntry {
+  id        Int      @id @default(autoincrement())
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+  dateTime  DateTime
+  moodScore Int
+  tags      String?
+  note      String?
+}
+
+model Goal {
+  id          Int            @id @default(autoincrement())
+  user        User?          @relation(fields: [userId], references: [id])
+  userId      Int?
+  title       String
+  description String?
+  category    String?
+  specific    String?
+  measurable  String?
+  achievable  String?
+  relevant    String?
+  timeBound   String?
+  dueDate     DateTime?
+  status      String  @default("active")
+
+  milestones  GoalMilestone[]
+}
+
+model GoalMilestone {
+  id        Int    @id @default(autoincrement())
+  goal      Goal   @relation(fields: [goalId], references: [id])
+  goalId    Int
+  title     String
+  targetDate DateTime?
+  status    String @default("pending")
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  user        User?    @relation(fields: [userId], references: [id])
+  userId      Int?
+  name        String
+  description String?
+  status      String   @default("active")
+  startDate   DateTime?
+  dueDate     DateTime?
+  color       String?
+
+  tasks       Task[]
+  timeEntries TimeEntry[]
+}
+
+model PlannedTime {
+  id             Int              @id @default(autoincrement())
+  date           DateTime
+  category       ActivityCategory @relation(fields: [categoryId], references: [id])
+  categoryId     Int
+  plannedMinutes Int
+
+  @@unique([date, categoryId], name: "date_category_unique")
+}
